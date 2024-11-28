@@ -174,8 +174,8 @@ public class GeneticAlgorithm {
 					  					.mapToInt(ind -> ind.fitness)
 					  					.max()
 					  					.orElse(0); // TH hiếm: không có cá thể nào, return 0
-			  System.out.println("Thế hệ mới "+generation+ " có độ thích nghi tốt nhất là: " + currentBest);
-			  System.out.println("Độ thích nghi tốt nhất của quần thể đang là: "+bestFitness);
+			  System.out.println("New generation "+generation+ " is having their best fitness: " + currentBest);
+			  System.out.println("Population has been have the best fitness: "+bestFitness);
 			  if ( currentBest > bestFitness ) {
 				  bestFitness = currentBest;
 				  noImprovement = 0;
@@ -191,15 +191,15 @@ public class GeneticAlgorithm {
 			  
 			  //Đột biến
 			  mutation(population);
+			  System.out.println(">>>>> Generation: " + generation + " --> Population's best fitness: "+bestFitness +"" );
+			  System.out.println();
 			  
 			  generation++ ;
-			  
-			  System.out.println(">>>>> Thế hệ: " + generation + " --> Độ thích nghi tốt nhất: "+bestFitness +"" );
-			  System.out.println();
+
 		  }
-		  System.out.println("Sau "+ generation + " thế hệ, tim được độ thích nghi tốt nhất: "+ bestFitness);
-		  System.out.println("Giá trị lớn nhất của cái túi: "+bestFitness);
-		  System.out.println("\n");
+		  System.out.println("After "+ generation + " generations, come up with the best fitness for the population: "+ bestFitness);
+		  System.out.println("Max value of the bag: "+bestFitness);
+		  System.out.println("\n *****Algorithm ends*****");
 	  }
 	  
 
