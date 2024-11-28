@@ -11,7 +11,8 @@ public class Population {
  		individuals = new Individual[size];
  		
  		for ( int i=0; i<size; i++) {
- 		// 'số lượng cá thể' gồm các cá thể, mỗi cá thể gồm 1 chuỗi gene: 0 hoặc 1-lấy hay không lấy đồ vật
+ 		// Mỗi cá thể được khởi tạo với 1 chuỗi gene
+ 		// số lượng phần tử của gene = số đồ vật = số lựa chọn có chọn đồ vật vào túi hay không ( 0 hoặc 1 )
  			individuals[i] =  new Individual(numItems);
  		}
  		

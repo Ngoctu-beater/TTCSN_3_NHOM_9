@@ -3,6 +3,7 @@ package ulti;
 import java.util.Arrays;
 import java.util.Random;
 
+
 public class GeneticAlgorithm {
 	// Kích thước quần thể
 	private int populationSize;
@@ -51,7 +52,7 @@ public class GeneticAlgorithm {
 			
 			// Duyệt qua số lượng các đồ vật OR các phần tử trong mảng gene của cá thể
 			for ( int i=0; i < numItems; i++ ) {
-				
+				// Nếu phần tử gene = 1 -> tăng giá trị và trọng lượng cái túi 
 				if ( individual.genes[i] ==1 ) {
 					totalValue += items[i].value;
 					totalWeight += items[i].weight;
@@ -93,6 +94,114 @@ public class GeneticAlgorithm {
 	            }
 	        }
 	    }
+	  
+	  // Lai ghép 
+	  public void crossover ( Population population ) {
+		  // Lặp lại quá trình lai ghép 20 lần
+		  for ( int i=0; i<20; i++ ) {
+			  // Chọn ngẫu nhiên 1 cặp bố mẹ từ quần thể
+			  int parent1Index = random.nextInt(populationSize);
+			  int parent2Index = random.nextInt(populationSize);
+			  
+			  Individual parent1 = population.individuals[parent1Index];
+			  Individual parent2 = population.individuals[parent2Index];
+			  
+			  // Thực hiện lai ghép mảng gen của bố mẹ
+			  for ( int j=0; j< numItems; j++ ) {
+				  if ( random.nextInt(2) == 1 ) { // Tạo xác suất 50% khả năng lai ghép ( Tạo random 1 số hoặc 0 hoặc 1, nếu trả ra 1 == 1 return True => tiến hành lai ghép )
+					  // Trao đổi một phần tử gen giữa 2 bố mẹ
+					  int temp = parent1.genes[j];
+					  parent1.genes[j] = parent2.genes[j];
+					  parent2.genes[j] = temp;
+				  }
+			  }
+		  }
+	  }
+	  
+	  // Đột biến
+	  public void mutation (Population population) {
+		  // Tạo random 1 cá thể đột biến từ quần thể
+		  int index = random.nextInt(populationSize);
+		  
+		  // Tạo random 1 phần tử gene đột biến từ mảng gen
+		  int geneIndex = random.nextInt(numItems);
+		  
+		  // Đảo ngược giá trị của phần từ gen đột biến của cá thể đột biến
+		  population.individuals[index].genes[geneIndex]=  1 - population.individuals[index].genes[geneIndex];
+	  }
+	  
+	  // Điều kiện dừng 
+	  // Xét các yếu tố: 
+	  //	+ số lượng thế hệ: generation-maxGenerations : khi 'số thế hệ' đã đạt hoặc quá giới hạn số lượng thế hệ => return true 
+	  //	+ độ thích nghi: bestFitness-threshhold: khi 'giá trị độ thích nghi tốt nhất' đã đạt hoặc vượt ngưỡng => return true
+	  //	+ độ cải thiện thích nghi: noImprovement-maxNoImprovement: khi 'số thế hệ không có độ cải thiện' vượt quá ngưỡng => return true
+	  public boolean stopCondition ( int generation, int maxGenerations, int bestFitness, int threshold, int noImprovement, int maxNoImprovement) {
+		  return generation >= maxGenerations || bestFitness >= threshold || noImprovement >= maxNoImprovement;
+	  }
+	  
+	  // Giải thuật
+	  public void run() {
+		  // khởi tạo quần thể
+		  Population population = new Population( populationSize, numItems);
+		  initializePopulation ( population);
+		  
+		  // Thế hệ đầu 
+		  int generation =0;
+		  
+		  // Số lượng thế hệ tối đa
+		  int maxGenerations = 1000;
+		  
+		  // Độ thích nghi 
+		  int bestFitness = 0;
+		  
+		  // Ngưỡng thích nghi tốt nhất
+		  int threshold = 500;
+		  
+		  // Số thế hệ không có độ cải thiện 
+		  int noImprovement = 0;
+		  
+		  // Ngưỡng giới hạn số thế hệ không có độ cải thiện
+		  int maxNoImprovement = 100; 
+		  
+		  while ( !stopCondition (generation, maxGenerations, bestFitness, threshold, noImprovement, maxNoImprovement)) {
+			  
+			  // Đánh giá độ thích nghi của quần thể
+			  evaluateFitness (population);
+			  
+			  // Duyệt qua toàn bộ các cá thể trong quần thể
+			  // Tìm giá trị max của độ thích nghi-fitness
+			  int currentBest = Arrays.stream(population.individuals)
+					  					.mapToInt(ind -> ind.fitness)
+					  					.max()
+					  					.orElse(0); // TH hiếm: không có cá thể nào, return 0
+			  System.out.println("Thế hệ mới "+generation+ " có độ thích nghi tốt nhất là: " + currentBest);
+			  System.out.println("Độ thích nghi tốt nhất của quần thể đang là: "+bestFitness);
+			  if ( currentBest > bestFitness ) {
+				  bestFitness = currentBest;
+				  noImprovement = 0;
+			  } else {
+				  noImprovement++;
+			  }
+			  
+			  // Chọn lọc
+			  selection (population);
+			  
+			  // Lai ghép
+			  crossover (population);
+			  
+			  //Đột biến
+			  mutation(population);
+			  
+			  generation++ ;
+			  
+			  System.out.println(">>>>> Thế hệ: " + generation + " --> Độ thích nghi tốt nhất: "+bestFitness +"" );
+			  System.out.println();
+		  }
+		  System.out.println("Sau "+ generation + " thế hệ, tim được độ thích nghi tốt nhất: "+ bestFitness);
+		  System.out.println("Giá trị lớn nhất của cái túi: "+bestFitness);
+		  System.out.println("\n");
+	  }
+	  
 
 	
 	

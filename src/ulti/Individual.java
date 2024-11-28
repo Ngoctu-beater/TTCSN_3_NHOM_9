@@ -12,10 +12,10 @@ public class Individual {
 	// Constructor của Individual
 	public Individual ( int numItems) {
 		
-		// mảng genes được khởi tạo với số lượng = numItems - số lượng đồ vật trong bài toán cái túi
+		// Mảng genes được khởi tạo với số lượng = numItems - số lượng đồ vật trong bài toán cái túi
 		genes = new int [numItems];
 		
-		// độ thích nghi khi được khởi tạo = 0
+		// Độ thích nghi khi được khởi tạo = 0
 		fitness =0;
 	}
 	
