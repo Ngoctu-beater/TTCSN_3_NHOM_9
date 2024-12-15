@@ -2,7 +2,7 @@ package ulti;
 
 import java.util.Arrays;
 import java.util.Random;
-
+import java.util.Comparator;
 
 public class GeneticAlgorithm implements Prototype {
 	// Kích thước quần thể
@@ -22,17 +22,17 @@ public class GeneticAlgorithm implements Prototype {
 	
 	public GeneticAlgorithm(int populationSize, int numItems, int maxWeight, Item[] items) {
 		this.populationSize = populationSize;
-        this.numItems = numItems;
-        this.maxWeight = maxWeight;
-        this.items = items;
-        this.random = new Random();
+        	this.numItems = numItems;
+        	this.maxWeight = maxWeight;
+        	this.items = items;
+        	this.random = new Random();
 	}
 	
 	// Khởi tạo quần thể 
 	public void initializePopulation ( Population population) {
 		// Duyệt từng cá thể trong quần thể
 		for (Individual individual : population.individuals) {
-			for ( int i=0; i < numItems; i++) {
+			for ( int i = 0; i < numItems; i++) {
 				// Khởi tạo gene cho từng cá thể, số lượng gene ứng với số lượng 'lựa chọn đồ vật'
 				// 'lựa chọn đồ vật' = số đồ vật có thể bỏ vào túi
 				individual.genes[i] = random.nextInt(2); // 0 hoặc 1
@@ -41,19 +41,19 @@ public class GeneticAlgorithm implements Prototype {
 	}
 	
 	// Đánh giá độ thích nghi
-	public void evaluateFitness ( Population population ) {
+	public void evaluateFitness (Population population) {
 		// Duyệt từng cá thể trong quần thể
 		for (Individual individual : population.individuals) {
 			// Tổng giá trị từ đồ vật đã chọn
-			int totalValue =0;
+			int totalValue = 0;
 			
 			// Tổng khối lượng từ đồ vật đã chọn
-			int totalWeight =0;
+			int totalWeight = 0;
 			
 			// Duyệt qua số lượng các đồ vật OR các phần tử trong mảng gene của cá thể
-			for ( int i=0; i < numItems; i++ ) {
+			for (int i = 0; i < numItems; i++) {
 				// Nếu phần tử gene = 1 -> tăng giá trị và trọng lượng cái túi 
-				if ( individual.genes[i] ==1 ) {
+				if (individual.genes[i] == 1) {
 					totalValue += items[i].value;
 					totalWeight += items[i].weight;
 				}
@@ -73,7 +73,7 @@ public class GeneticAlgorithm implements Prototype {
 	
 	// Chọn lọc
 	  public void selection(Population population) {
-		  //
+		
 	        int[] fitnessArray = Arrays.stream(population.individuals) // Chuyển đổi mảng individuals của quần thể population thành 1 chuỗi S
 	                                   .mapToInt(ind -> ind.fitness) // lấy giá trị fitness trong mỗi individuals và chuyển thành kiểu int => mỗi stream fitness (int)
 	                                   .toArray(); // Chuyển stream fitness (int) bên trên thành 1 mảng
@@ -86,12 +86,12 @@ public class GeneticAlgorithm implements Prototype {
 	        int threshold = fitnessArray[superiors]; 
 
 	        for (int i = 0; i < populationSize; i++) {
-	        	
-	        	// Lọc những cá thể có 'độ thích nghi' fitness nhỏ hơn 'ngưỡng phân loại ' threhold
-	            if (population.individuals[i].fitness < threshold) {
-	            	// Cá thể có độ thích nghi kém sẽ bị thay thế bởi 1 cá thể ngẫu nhiên trong quần thể
-	                population.individuals[i] = population.individuals[random.nextInt(populationSize)];
-	            }
+			
+			// Lọc những cá thể có 'độ thích nghi' fitness nhỏ hơn 'ngưỡng phân loại ' threhold
+	            	if (population.individuals[i].fitness < threshold) {
+	            		// Cá thể có độ thích nghi kém sẽ bị thay thế bởi 1 cá thể ngẫu nhiên trong quần thể
+	                	population.individuals[i] = population.individuals[random.nextInt(populationSize)];
+	            	}
 	        }
 	    }
 	  
@@ -146,7 +146,7 @@ public class GeneticAlgorithm implements Prototype {
 		  initializePopulation ( population);
 		  
 		  // Thế hệ đầu 
-		  int generation =0;
+		  int generation = 0;
 		  
 		  // Số lượng thế hệ tối đa
 		  int maxGenerations = 1000;
@@ -162,6 +162,9 @@ public class GeneticAlgorithm implements Prototype {
 		  
 		  // Ngưỡng giới hạn số thế hệ không có độ cải thiện
 		  int maxNoImprovement = 100; 
+
+		  // Lưu trữ cá thể tốt nhất qua all thế hệ
+        	  Individual bestIndividual = null;
 		  
 		  while ( !stopCondition (generation, maxGenerations, bestFitness, threshold, noImprovement, maxNoImprovement)) {
 			  
@@ -171,13 +174,13 @@ public class GeneticAlgorithm implements Prototype {
 			  // Duyệt qua toàn bộ các cá thể trong quần thể
 			  // Tìm giá trị max của độ thích nghi-fitness
 			  int currentBest = Arrays.stream(population.individuals)
-					  					.mapToInt(ind -> ind.fitness)
-					  					.max()
-					  					.orElse(0); // TH hiếm: không có cá thể nào, return 0
+					  					.max(Comparator.comparingInt(ind -> ind.fitness))
+					  					.orElse(null); // TH hiếm: không có cá thể nào, return null
 			  System.out.println("New generation "+generation+ " is having their best fitness: " + currentBest);
 			  System.out.println("Population has been have the best fitness: "+bestFitness);
-			  if ( currentBest > bestFitness ) {
-				  bestFitness = currentBest;
+			  if ( currentBest != null && currentBest.fitness > bestFitness ) {
+				  bestFitness = currentBest.fitness;
+                		  bestIndividual = currentBest;
 				  noImprovement = 0;
 			  } else {
 				  noImprovement++;
@@ -197,12 +200,32 @@ public class GeneticAlgorithm implements Prototype {
 			  generation++ ;
 
 		  }
+		  
 		  System.out.println("After "+ generation + " generations, come up with the best fitness for the population: "+ bestFitness);
+
 		  System.out.println("---> Max value of the bag: "+bestFitness);
 		  System.out.println("\n *****Algorithm ends*****");
 	  }
-	  
 
-	
-	
+		  if (bestIndividual != null) {
+            		int totalWeight = 0;
+            		int totalValue = 0;
+
+            		System.out.println("\nSelected items in the best solution:");
+            		for (int i = 0; i < numItems; i++) {
+                		if (bestIndividual.genes[i] == 1) {
+                    		System.out.println("Item " + i + " (Value: " + items[i].value + ", Weight: " + items[i].weight + ")");
+                    		totalWeight += items[i].weight;
+                    		totalValue += items[i].value;
+                	}
+            	}
+
+            	System.out.println("Total Value: " + totalValue);
+            	System.out.println("Total Weight: " + totalWeight);
+        	} else {
+            		System.out.println("No valid solution found.");
+        	}
+		  
+		  System.out.println("\n *****Algorithm ends*****");
+	  }	
 }
