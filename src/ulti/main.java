@@ -10,7 +10,7 @@ public class main {
 			    // new Item(16, 10), new Item(17, 9), new Item(19, 11), new Item(21, 12), new Item(22, 15)
 			};
 		
-		GeneticAlgorithm rocket = new GeneticAlgorithm (100, 20, 500, items);
+		GeneticAlgorithm rocket = new GeneticAlgorithm (100, items.length, 50, items);
 		rocket.run();
 	}
 }
