@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Comparator;
 
-public class GeneticAlgorithm {
+public class GeneticAlgorithm implements Prototype {
 	// Kích thước quần thể
 	private int populationSize;
 	
@@ -202,7 +202,10 @@ public class GeneticAlgorithm {
 		  }
 		  
 		  System.out.println("After "+ generation + " generations, come up with the best fitness for the population: "+ bestFitness);
-		  System.out.println("Max value of the bag: "+bestFitness);
+
+		  System.out.println("---> Max value of the bag: "+bestFitness);
+		  System.out.println("\n *****Algorithm ends*****");
+	  }
 
 		  if (bestIndividual != null) {
             		int totalWeight = 0;
